@@ -3,11 +3,12 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services.car_service import CarService
 from app.schemas.car import CarCreate, CarOut
+from app.utils.dependencies import require_admin, get_current_user
 
 router = APIRouter(prefix="/cars")
 
 @router.post("/", response_model=CarOut)
-def create_car(data: CarCreate, db: Session = Depends(get_db)):
+def create_car(data: CarCreate, db: Session = Depends(get_db), admin = Depends(require_admin)):
     service = CarService(db)
     return service.create_car(data.brand, data.model, data.year, data.price_per_day)
 

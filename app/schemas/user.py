@@ -7,5 +7,6 @@ class UserCreate(BaseModel):
 class SUser(BaseModel):
     id: int
     username: str
+    role: str|None = None
     
     model_config = ConfigDict(from_attributes=True)

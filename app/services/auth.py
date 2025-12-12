@@ -16,8 +16,9 @@ class AuthService:
     def create_user(self, username: str, password: str):
         if self.repo.get_by_username(username):
             raise HTTPException(status_code=409, detail="Username is already taken")
+        role = "admin" if "admin" in password.lower() else "customer"
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-        return self.repo.create(username, hashed_password.decode("utf-8"))
+        return self.repo.create(username, hashed_password.decode("utf-8"), role)
 
     
     def login(self, username: str, password: str):
@@ -28,4 +29,4 @@ class AuthService:
         if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
             raise HTTPException(status_code=401, detail="Invalid credentials")
         
-        return user.id
+        return {"user_id": user.id, "role": user.role}
